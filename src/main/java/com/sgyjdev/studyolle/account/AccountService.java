@@ -1,13 +1,18 @@
 package com.sgyjdev.studyolle.account;
 
 import com.sgyjdev.studyolle.domain.Account;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.Model;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class AccountService {
 
@@ -20,6 +25,7 @@ public class AccountService {
      *
      * @param signUpForm 회원가입 폼
      */
+    @Transactional
     public void processNewAccount(SignUpForm signUpForm) {
         Account newAccount = saveNewAccount(signUpForm);
         newAccount.generateEmailCheckToken();
@@ -52,4 +58,22 @@ public class AccountService {
         javaMailSender.send(simpleMailMessage);
     }
 
+    public String validEmailToken(String token, String email, Model model) {
+        Optional<Account> optionalAccount = accountRepository.findByEmail(email);
+        String view = "account/checked-email";
+        if (optionalAccount.isEmpty()) {
+            model.addAttribute("error", "wrong.email");
+            return view;
+        }
+        Account account = optionalAccount.get();
+        if (!account.getEmailCheckToken().equals(token)) {
+            model.addAttribute("error", "wrong.token");
+            return view;
+        }
+
+        account.successEmailVerified();
+        model.addAttribute("numberOfUser", accountRepository.count());
+        model.addAttribute("nickname", account.getNickname());
+        return view;
+    }
 }

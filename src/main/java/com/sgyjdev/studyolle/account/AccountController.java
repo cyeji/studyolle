@@ -40,4 +40,10 @@ public class AccountController {
     }
 
 
+    @GetMapping("/check-email-token")
+    public String checkEmailToken(String token, String email, Model model) {
+
+        return accountService.validEmailToken(token, email, model);
+    }
+
 }
