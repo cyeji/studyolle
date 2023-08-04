@@ -4,6 +4,7 @@ import com.sgyjdev.studyolle.domain.Account;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -12,6 +13,7 @@ public class AccountService {
 
     private final AccountRepository accountRepository;
     private final JavaMailSender javaMailSender;
+    private final PasswordEncoder passwordEncoder;
 
     /**
      * 새로운 계정 생성
@@ -31,8 +33,9 @@ public class AccountService {
      * @return 계정
      */
     private Account saveNewAccount(SignUpForm signUpForm) {
-        Account account = Account.builder().email(signUpForm.getEmail()).nickname(signUpForm.getNickname()).password(signUpForm.getPassword())
-            .studyCreatedByWeb(true).studyEnrollmentResultByWeb(true).studyCreatedByWeb(true).build();
+        Account account = Account.builder().email(signUpForm.getEmail()).nickname(signUpForm.getNickname())
+            .password(passwordEncoder.encode(signUpForm.getPassword())).studyCreatedByWeb(true).studyEnrollmentResultByWeb(true).studyCreatedByWeb(true)
+            .build();
         return accountRepository.save(account);
     }
 

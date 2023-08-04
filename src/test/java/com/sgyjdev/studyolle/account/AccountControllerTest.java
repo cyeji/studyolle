@@ -1,5 +1,7 @@
 package com.sgyjdev.studyolle.account;
 
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -8,6 +10,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
+import com.sgyjdev.studyolle.domain.Account;
+import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,6 +55,10 @@ class AccountControllerTest {
         String mail = "seunggu@gmail.com";
         mockMvc.perform(post("/sign-up").param("nickname", "seunggu").param("email", mail).param("password", "12345678").with(csrf()))
             .andExpect(status().is3xxRedirection()).andExpect(view().name("redirect:/"));
+
+        Optional<Account> optionalAccount = accountRepository.findByEmail(mail);
+        assertNotNull(optionalAccount);
+        assertNotEquals("12345678", optionalAccount.get().getPassword());
 
         assertTrue(accountRepository.existsByEmail(mail));
         // 이메일 전송 여부 확인

@@ -1,6 +1,7 @@
 package com.sgyjdev.studyolle.account;
 
 import com.sgyjdev.studyolle.domain.Account;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,4 +13,6 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
     boolean existsByEmail(String email);
 
     boolean existsByNickname(String nickname);
+
+    Optional<Account> findByEmail(String mail);
 }
