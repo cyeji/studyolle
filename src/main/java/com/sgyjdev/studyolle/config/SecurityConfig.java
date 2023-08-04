@@ -2,6 +2,7 @@ package com.sgyjdev.studyolle.config;
 
 import static org.springframework.security.web.util.matcher.AntPathRequestMatcher.antMatcher;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -11,6 +12,7 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
 
     @Bean
@@ -21,10 +23,12 @@ public class SecurityConfig {
                 antMatcher("/email-login"), antMatcher("/check-email-login"), antMatcher("/login-link")).permitAll();
 
             request.requestMatchers(antMatcher(HttpMethod.GET), antMatcher("/profile/*")).permitAll();
+            request.anyRequest().authenticated();
 
-            
+
         });
         return http.build();
     }
+
 
 }
