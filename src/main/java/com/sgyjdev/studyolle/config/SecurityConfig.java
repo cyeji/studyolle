@@ -21,6 +21,8 @@ public class SecurityConfig {
                 antMatcher("/email-login"), antMatcher("/check-email-login"), antMatcher("/login-link")).permitAll();
 
             request.requestMatchers(antMatcher(HttpMethod.GET), antMatcher("/profile/*")).permitAll();
+
+            
         });
         return http.build();
     }
