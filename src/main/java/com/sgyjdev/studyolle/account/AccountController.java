@@ -1,7 +1,10 @@
 package com.sgyjdev.studyolle.account;
 
+import com.sgyjdev.studyolle.domain.Account;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
@@ -15,6 +18,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 public class AccountController {
 
     private final SignUpFormValidator signUpFormValidator;
+    private final AccountRepository accountRepository;
+    private final JavaMailSender javaMailSender;
 
     @InitBinder("signUpForm")
     public void initBinder(WebDataBinder webDataBinder) {
@@ -32,6 +37,17 @@ public class AccountController {
         if (errors.hasErrors()) {
             return "account/sign-up";
         }
+
+        Account account = Account.builder().email(signUpForm.getEmail()).nickname(signUpForm.getNickname()).password(signUpForm.getPassword())
+            .studyCreatedByWeb(true).studyEnrollmentResultByWeb(true).studyCreatedByWeb(true).build();
+        Account newAccount = accountRepository.save(account);
+        newAccount.generateEmailCheckToken();
+
+        SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
+        simpleMailMessage.setTo(newAccount.getEmail());
+        simpleMailMessage.setSubject("스터디올래, 회원가입 인증");
+        simpleMailMessage.setText("/check-email-token?token=" + newAccount.getEmailCheckToken() + "&email=" + newAccount.getEmail());
+        javaMailSender.send(simpleMailMessage);
 
         return "redirect:/";
     }
