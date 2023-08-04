@@ -71,7 +71,7 @@ public class AccountService {
             return view;
         }
 
-        account.successEmailVerified();
+        account.successSignUp();
         model.addAttribute("numberOfUser", accountRepository.count());
         model.addAttribute("nickname", account.getNickname());
         return view;
