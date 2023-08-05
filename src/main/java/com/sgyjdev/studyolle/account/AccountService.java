@@ -10,6 +10,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +24,8 @@ public class AccountService {
     private final AccountRepository accountRepository;
     private final JavaMailSender javaMailSender;
     private final PasswordEncoder passwordEncoder;
+    private final UserDetailsService userDetailsService;
+
 
     /**
      * 새로운 계정 생성
@@ -55,7 +58,7 @@ public class AccountService {
      *
      * @param newAccount 신규 계정
      */
-    private void sendSignUpConfirmEmail(Account newAccount) {
+    void sendSignUpConfirmEmail(Account newAccount) {
         SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
         simpleMailMessage.setTo(newAccount.getEmail());
         simpleMailMessage.setSubject("스터디올래, 회원가입 인증");
@@ -84,7 +87,7 @@ public class AccountService {
     }
 
     public void login(Account account) {
-        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(account.getNickname(), account.getPassword(),
+        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(new UserAccount(account), account.getPassword(),
             List.of(new SimpleGrantedAuthority("ROLE_USER")));
         SecurityContextHolder.getContext().setAuthentication(token);
     }

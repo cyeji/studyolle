@@ -17,12 +17,13 @@ import org.springframework.security.web.SecurityFilterChain;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         http.authorizeHttpRequests(request -> {
-            request.requestMatchers(antMatcher("/"), antMatcher("/login"), antMatcher("/sign-up"), antMatcher("/check-email"), antMatcher("/check-email-token"),
-                antMatcher("/email-login"), antMatcher("/check-email-login"), antMatcher("/login-link")).permitAll();
+            request.requestMatchers(antMatcher("/"), antMatcher("/login"), antMatcher("/sign-up"), antMatcher("/check-email-token"), antMatcher("/email-login"),
+                antMatcher("/check-email-login"), antMatcher("/login-link")).permitAll();
 
             request.requestMatchers(antMatcher(HttpMethod.GET), antMatcher("/profile/*")).permitAll();
             request.anyRequest().authenticated();
