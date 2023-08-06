@@ -10,6 +10,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
@@ -27,9 +28,12 @@ public class SecurityConfig {
 
             request.requestMatchers(antMatcher(HttpMethod.GET), antMatcher("/profile/*")).permitAll();
             request.anyRequest().authenticated();
-
-
         });
+
+        http.formLogin(formLogin -> formLogin.loginPage("/login").permitAll());
+        http.logout(logout -> logout.logoutSuccessUrl("/"));
+
+        SecurityContextHolder.setStrategyName(SecurityContextHolder.MODE_GLOBAL);
         return http.build();
     }
 
