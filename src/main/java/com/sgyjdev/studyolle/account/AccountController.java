@@ -42,7 +42,7 @@ public class AccountController {
 
         Account account = accountService.processNewAccount(signUpForm);
         accountService.login(account);
-
+        log.info("authentication : {}", SecurityContextHolder.getContext().getAuthentication().getDetails());
         return "redirect:/";
     }
 
