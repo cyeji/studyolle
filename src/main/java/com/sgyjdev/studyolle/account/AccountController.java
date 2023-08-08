@@ -5,8 +5,6 @@ import jakarta.validation.Valid;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
@@ -41,8 +39,6 @@ public class AccountController {
         }
 
         Account account = accountService.processNewAccount(signUpForm);
-        accountService.login(account);
-
         return "redirect:/";
     }
 
@@ -52,8 +48,6 @@ public class AccountController {
 
     @GetMapping("/check-email-token")
     public String checkEmailToken(String token, String email, Model model) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        log.error("Authentication :: {}", authentication);
         return accountService.validEmailToken(token, email, model);
     }
 
