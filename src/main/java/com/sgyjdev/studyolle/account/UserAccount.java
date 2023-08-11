@@ -16,4 +16,7 @@ public class UserAccount extends User {
         this.account = account;
     }
 
+    public static UserAccount from(Account account) {
+        return new UserAccount(account);
+    }
 }
